@@ -1,0 +1,239 @@
+#include <iostream>
+#include<string.h>//for strcpy()
+#include<unistd.h>//for usleep()
+#include<conio.h>//for getch()
+using namespace std;
+int count_Digit(long long int n)//function to calculate no of digits in a number
+{
+    int count = 0;
+    while (n != 0)
+    {
+        n = n / 10;
+        ++count;
+    }
+    return count;
+}
+void intro()
+{
+    system("CLS");
+    cout<<"\n\t\t\t\tWelcome to STADIUM MANAGEMENT SYSTEM" <<endl;
+    cout<<"\n\n\n\n\n\n\n\n\t\t\t\t\t\t\t\t\tMade by:"<<endl;
+    cout<<"\n\n\t\t\t\t\t\t\t\t\tYash Gupta"<<endl;
+    getch();
+    system("CLS");
+}
+class match //class to print the schedule of matches
+{
+public:
+    char teams[100][100]={"DC","RCB","CSK","MI","RR","SRH","PBKS","KKR"};
+    void match_list()
+    {
+        cout<<"Stadium: Wankhede Stadium,Mumbai"<<endl;
+        cout<<"Match Schedule: "<<endl;
+        cout<<"Sno.vgf\tHome Team\tAway Team\tDate\t\tTime"<<endl;
+        for(int i=0,j=7;i<8;i++,j--)
+            cout<<i+1<<"\t"<<teams[i]<<"\t  vs \t"<<teams[j]<<"\t\t"<<i+1<<"-5-2021\t7:30pm" <<endl;
+    }
+};
+class ticket;
+class stadium :public match     //class to regulate stadium
+{
+    char s_name[100];
+    char Entry_name[100];
+    int transaction_id;
+    long int capacity;
+public:
+    ticket *tick;   //shows aggregation relationship
+    stadium()
+    {
+        strcpy(s_name,"Wankhede Stadium,Mumbai");//function to copy string to s_name
+        capacity=50000;
+    }
+    void entry_stadium()
+    {
+        cout<<"Welcome to Web Entry to Stadium"<<endl;
+        cout<<"Please Entry the following details: "<<endl;
+        cout<<"Enter your name: ";
+        cin.ignore();
+        gets(Entry_name);
+        do{
+                cout<<"Enter last 4 digits of transaction id: "<<endl;
+                cin>>transaction_id;
+        }while(count_Digit(transaction_id)!=4);
+        cout<<endl<<"Entry Confirmed!!!"<<endl;
+    }
+};
+class ticket :public stadium//class ticket to print ticket,payment
+{
+    char name[100],email_id[50];
+    int age;
+    long long int phno;
+    float cost;
+    int n,cvv,match_choice;
+    long long int card_no;
+
+public:
+    void personal()
+    {
+        cout<<"Enter Your Name: ";
+        cin.ignore();
+        gets(name);
+        cout<<"Enter Your age: ";
+        cin>>age;
+  do{
+        cout<<"Enter your 10 digit Phone no: ";
+        cin>>phno;
+    }while(count_Digit(phno)!=10);
+        cout<<endl;
+    }
+    void tickets()
+    {
+        cout<<"Enter Email Id: ";
+        cin.ignore();
+        gets(email_id);
+        int ch;
+        do{
+            system("CLS");//function to clear entire output screen
+            do{
+                match_list();
+                cout<<"Choose the match : ";
+                cin>>match_choice;
+            }while(match_choice<1 || match_choice>8);
+            cout<<"\t\t\t\tTickets for "<<teams[match_choice-1]<<" vs "<<teams[8-match_choice]<<endl<<endl;
+            cout<<"Categories of Different Tickets"<<endl<<endl;
+            cout<<"1.Cost per person for any block : Rs 1500"<<endl;
+            cout<<"2.Cost per person for clubhouse : RS 6000"<<endl;
+            cout<<"3.Cost per person for VIP lounge: Rs 12000"<<endl<<endl;
+            cout<<"Enter your choice: ";
+            cin>>ch;
+        }while(ch<1 || ch>3);
+        cout<<"Enter the number of tickets u want: ";
+        cin>>n;
+        if(ch==1)
+            cost=1500*n;
+        else if(ch==2)
+            cost=6000*n;
+        else
+            cost=12000*n;
+        system("CLS");
+        ticket *tick=new ticket[n];
+        cout<<"Enter the details of "<<n<<" individuals: "<<endl;
+        for(int i=0;i<n;i++)
+        {
+            cout<<i+1<<"."<<endl;
+            tick[i].personal();
+        }
+        cout<<"Total cost of tickets: "<<cost<<endl<<endl;
+        cout<<"(Press enter to continue to payment gateway...)"<<endl;
+        cout<<"(Press esc to to exit...)";
+        if(getch()==27)//getch() function to pause the program until u press enter
+            exit(0);//function to exit the code
+        pay();
+    }
+    void pay()
+    {
+        int ch;
+        char bank_name[100],holder_name[50];
+        do{
+            system("CLS");
+            cout<<"Welcome to the Payment Gateway"<<endl;
+            cout<<"Choose the mode of payment"<<endl<<endl;
+            cout<<"1.Debit Card"<<endl;
+            cout<<"2.Credit Card"<<endl;
+            cout<<"Enter your choose: ";
+            cin>>ch;
+        }while(ch<1 || ch>2);
+        if(ch==1)
+            cout<<"Payment mode choosed: Debit Card"<<endl<<endl;
+        else
+            cout<<"Payment mode choosed: Credit Card"<<endl<<endl;
+        cout<<"Enter the name of bank: ";
+        cin.ignore();
+        gets(bank_name);
+        system("CLS");
+        cout<<"Welcome to "<<bank_name<<" Payment Gateway"<<endl;
+        cout<<"Enter Account holder name: ";
+        cin.ignore();
+        gets(holder_name);
+        cout<<"Enter the Card Number: "<<endl;
+        cin>>card_no;
+    do{
+        cout<<"Enter the 3 digit CVV: ";
+        cin>>cvv;
+    }while(count_Digit(cvv)!=3);
+        cout<<"Payment being proccessed";
+        for(int i=0;i<3;i++)
+        {
+            cout<<".";
+            usleep(1000000);//usleep function to give time delay of 1 second
+        }
+        cout<<endl<<"Payment Confirmed!!!"<<endl;
+        cout<<"Transaction id: "<<card_no<<cvv<<endl<<endl;
+        cout<<"(press enter to generate ticket)"<<endl;
+        getch();//getch() function to pause the program until u press enter
+        generate_ticket();
+    }
+    void generate_ticket()
+    {
+        system("CLS");//function to clear entire output screen
+        cout<<"\t\t\t\tTicket"<<endl;
+        cout<<"Stadium: Wankhede Stadium,Mumbai"<<endl;
+        cout<<"Match: "<<teams[match_choice-1]<<" vs "<<teams[8-match_choice]<<endl;
+        cout<<"Timing: 7:30 pm"<<endl<<endl;
+        cout<<"Name: "<<name<<endl<<"Phone no: "<<phno<<endl;
+        cout<<"No of people: "<<n<<endl<<"Email Id: "<<email_id<<endl;
+        cout<<"Money paid: "<<cost<<endl<<"Unique id: "<<card_no<<cvv<<endl<<endl<<endl;
+        cout<<"Your detailed ticket has been emailed to registered email id"<<endl;
+        }
+};
+int main()//main function
+{
+    intro();
+ A:
+     system("CLS");
+     char ans;
+    int ch;
+  do{
+    cout<<endl<<" ----------------------------------";
+    cout<<endl<<" Stadium Management System";
+    cout<<endl<<" ----------------------------------"<<endl;
+    cout<<endl<<" Welcome Customer! "<<endl;
+    cout<<endl<<" <1>Matches Schedule"<<endl;
+    cout<<endl<<" <2>Receiving Tickets"<<endl;
+    cout<<endl<<" <3>Entry in Stadium"<<endl;
+    cout<<endl<<" <4>For more information"<<endl;
+    cout<<endl<<" <5>Exit"<<endl;
+    cout<<"Enter your choice(1-5): ";
+    cin>>ch;
+    if(ch==5)
+        exit(0);
+    cout<<endl<<endl;
+}while(ch<1 || ch>5);
+    switch(ch)
+    {
+        case 1:{
+                match m;
+                m.match_list();
+                break;
+                }
+        case 2: {
+                cout<<"Tickets"<<endl;
+                ticket tkt;
+                tkt.personal();
+                tkt.tickets();
+                break;
+                }
+        case 3:{
+                stadium s;
+                s.entry_stadium();
+                break;
+                }
+        case 4:cout<<"For further information about tickets you can download our Application or contact us at 0123456789";
+				break;
+    }
+    cout<<"\n Do you want to choose another option(y/n)";
+    cin>>ans;
+    if(ans=='y'|| ans=='Y')
+        goto A;
+    return 0;
+}
